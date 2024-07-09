@@ -76,7 +76,7 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
       secure: true,
     });
 
-    return parseStringify(newUserAccount);
+    return parseStringify(newUser);
   } catch (err) {
     console.log("Error", err);
   }
@@ -111,10 +111,13 @@ export const createLinkToken = async (user: User) => {
       user: {
         client_user_id: user.$id,
       },
-      client_name: `${user.firstName} ${user.lastName}`,
+      client_name:
+        user.firstName != null && user.firstName != undefined
+          ? `${user.firstName} ${user.lastName}`
+          : user.name,
       products: ["auth"] as Products[],
       language: "en",
-      country_codes: ["IN", "US"] as CountryCode[],
+      country_codes: ["US"] as CountryCode[],
     };
 
     const response = await plaidClient.linkTokenCreate(tokenParams);
@@ -164,7 +167,6 @@ export const exchangePublicToken = async ({
     const response = await plaidClient.itemPublicTokenExchange({
       public_token: publicToken,
     });
-
     const accessToken = response.data.access_token;
     const itemId = response.data.item_id;
 
@@ -188,6 +190,8 @@ export const exchangePublicToken = async ({
     const processorToken = processorTokenResponse.data.processor_token;
 
     // Create a funding source URL for the account using the Dwolla customer ID, processor token, and bank name
+
+    console.log("user : ", user);
     const fundingSourceUrl = await addFundingSource({
       dwollaCustomerId: user.dwollaCustomerId,
       processorToken,
