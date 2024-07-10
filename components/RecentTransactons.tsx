@@ -24,17 +24,15 @@ const RecentTransactons = ({
 
       <Tabs defaultValue="account" className="w-full">
         <TabsList className="recent-transactions-tablist">
-          {accounts?.map((account) => {
-            return (
-              <TabsTrigger key={account.id} value={account.appwriteItemId}>
-                <BankTabItem
-                  account={account}
-                  key={account.id}
-                  appwriteItemId={account.appwriteItemId}
-                />
-              </TabsTrigger>
-            );
-          })}
+          {accounts.map((account: Account) => (
+            <TabsTrigger key={account.id} value={account.appwriteItemId}>
+              <BankTabItem
+                key={account.id}
+                account={account}
+                appwriteItemId={appwriteItemId}
+              />
+            </TabsTrigger>
+          ))}
         </TabsList>
         {accounts?.map((account: Account) => {
           return (
