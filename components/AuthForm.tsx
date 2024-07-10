@@ -53,6 +53,7 @@ const AuthForm = ({ type }: { type: string }) => {
           email: data.email,
           password: data.password,
         });
+        // console.log("response : ", response);
         if (response) {
           router.push("/");
         }
@@ -204,4 +205,4 @@ const AuthForm = ({ type }: { type: string }) => {
 
 export default AuthForm;
 
-// 4:25:27
+// 4:49:49

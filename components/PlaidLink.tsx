@@ -10,6 +10,7 @@ import {
   createLinkToken,
   exchangePublicToken,
 } from "@/lib/actions/user.actions";
+import Image from "next/image";
 const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
   const router = useRouter();
   const [token, setToken] = useState("");
@@ -32,7 +33,7 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
   useEffect(() => {
     const getLinkToken = async () => {
       const data = await createLinkToken(user);
-      console.log(data);
+      // console.log(data);
       setToken(data?.linkToken);
     };
     getLinkToken();
@@ -43,7 +44,7 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
         <Button
           className="plaidlink-primary"
           onClick={() => {
-            console.log("clicked");
+            // console.log("clicked");
             open();
           }}
           // disabled={ready}
@@ -51,9 +52,38 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
           Connect Bank
         </Button>
       ) : variant === "ghost" ? (
-        <Button>Connect Bank</Button>
+        <Button
+          variant={"ghost"}
+          className="plaidlink-ghost"
+          onClick={() => {
+            open();
+          }}
+        >
+          <Image
+            src="/icons/connect-bank.svg"
+            alt="connect bank"
+            width={24}
+            height={24}
+          />
+          <p className="hidden xl:block text-[16px] font-semibold text-black-2">
+            Connect Bank
+          </p>
+        </Button>
       ) : (
-        <Button>Connect Bank</Button>
+        <Button
+          className="plaidlink-default"
+          onClick={() => {
+            open();
+          }}
+        >
+          <Image
+            src="/icons/connect-bank.svg"
+            alt="connect bank"
+            width={24}
+            height={24}
+          />
+          <p className="text-[16px] font-semibold text-black-2">Connect Bank</p>
+        </Button>
       )}
     </>
   );

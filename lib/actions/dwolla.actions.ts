@@ -28,8 +28,8 @@ export const createFundingSource = async (
   options: CreateFundingSourceOptions
 ) => {
   try {
-    console.log(4);
-    console.log("options : ", options);
+    // console.log(4);
+    // console.log("options : ", options);
     return await dwollaClient
       .post(`customers/${options.customerId}/funding-sources`, {
         name: options.fundingSourceName,
@@ -100,9 +100,9 @@ export const addFundingSource = async ({
 }: AddFundingSourceParams) => {
   try {
     // create dwolla auth link
-    console.log(1);
+    // console.log(1);
     const dwollaAuthLinks = await createOnDemandAuthorization();
-    console.log(2);
+    // console.log(2);
 
     // add funding source to the dwolla customer & get the funding source url
     const fundingSourceOptions = {
@@ -111,7 +111,7 @@ export const addFundingSource = async ({
       plaidToken: processorToken,
       _links: dwollaAuthLinks,
     };
-    console.log(3);
+    // console.log(3);
     return await createFundingSource(fundingSourceOptions);
   } catch (err) {
     console.error("Transfer fund failed: ", err);

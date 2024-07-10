@@ -8,11 +8,12 @@ import {
   TransferNetwork,
   TransferType,
 } from "plaid";
+import { getTransactionsByBankId } from "./transaction.actions";
 
 import { plaidClient } from "../plaid";
 import { parseStringify } from "../utils";
 
-import { getTransactionsByBankId } from "./transaction.actions";
+// import { getTransactionsByBankId } from "./transaction.actions";
 import { getBanks, getBank } from "./user.actions";
 
 // Get multiple bank accounts
@@ -33,6 +34,7 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
         const institution = await getInstitution({
           institutionId: accountsResponse.data.item.institution_id!,
         });
+        // console.log("accountData : ", accountsResponse);
 
         const account = {
           id: accountData.account_id,
@@ -45,7 +47,7 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
           type: accountData.type as string,
           subtype: accountData.subtype! as string,
           appwriteItemId: bank.$id,
-          sharaebleId: bank.shareableId,
+          sharableId: bank.sharableId,
         };
 
         return account;
@@ -53,7 +55,7 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
     );
 
     const totalBanks = accounts.length;
-    const totalCurrentBalance = accounts.reduce((total, account) => {
+    const totalCurrentBalance = accounts.reduce((total: number, account) => {
       return total + account.currentBalance;
     }, 0);
 
@@ -68,39 +70,36 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
   try {
     // get bank from db
     const bank = await getBank({ documentId: appwriteItemId });
-
     // get account info from plaid
+
     const accountsResponse = await plaidClient.accountsGet({
-      access_token: bank.accessToken,
+      access_token: bank[0].accessToken,
     });
     const accountData = accountsResponse.data.accounts[0];
-
+    // console.log("accountsResponse : ", accountData);
     // get transfer transactions from appwrite
-    const transferTransactionsData = await getTransactionsByBankId({
-      bankId: bank.$id,
-    });
-
-    const transferTransactions = transferTransactionsData.documents.map(
-      (transferData: Transaction) => ({
-        id: transferData.$id,
-        name: transferData.name!,
-        amount: transferData.amount!,
-        date: transferData.$createdAt,
-        paymentChannel: transferData.channel,
-        category: transferData.category,
-        type: transferData.senderBankId === bank.$id ? "debit" : "credit",
-      })
-    );
-
+    // const transferTransactionsData = await getTransactionsByBankId({
+    //   bankId: bank.$id,
+    // });
+    // const transferTransactions = transferTransactionsData.documents.map(
+    //   (transferData: Transaction) => ({
+    //     id: transferData.$id,
+    //     name: transferData.name!,
+    //     amount: transferData.amount!,
+    //     date: transferData.$createdAt,
+    //     paymentChannel: transferData.channel,
+    //     category: transferData.category,
+    //     type: transferData.senderBankId === bank.$id ? "debit" : "credit",
+    //   })
+    // );
     // get institution info from plaid
     const institution = await getInstitution({
       institutionId: accountsResponse.data.item.institution_id!,
     });
-
     const transactions = await getTransactions({
-      accessToken: bank?.accessToken,
+      accessToken: bank[0]?.accessToken,
     });
-
+    // console.log("transactions : ", transactions);
     const account = {
       id: accountData.account_id,
       availableBalance: accountData.balances.available!,
@@ -113,12 +112,13 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       subtype: accountData.subtype! as string,
       appwriteItemId: bank.$id,
     };
-
     // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [...transactions, ...transferTransactions].sort(
+    const allTransactions = [...transactions].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-
+    // const allTransactions = [...transactions, ...transferTransactions].sort(
+    //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    // );
     return parseStringify({
       data: account,
       transactions: allTransactions,
@@ -161,6 +161,7 @@ export const getTransactions = async ({
       });
 
       const data = response.data;
+      // console.log("data : ", data);
 
       transactions = response.data.added.map((transaction) => ({
         id: transaction.transaction_id,
@@ -177,6 +178,8 @@ export const getTransactions = async ({
 
       hasMore = data.has_more;
     }
+
+    // console.log("transactions : ", transactions);
 
     return parseStringify(transactions);
   } catch (error) {
