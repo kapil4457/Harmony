@@ -37,7 +37,7 @@ export const getUserInfo = async ({ userId }: getUserInfoProps) => {
     console.log(err);
   }
 };
-export const signIn = async (userData: SignUpParams) => {
+export const signIn = async (userData: { email: string; password: string }) => {
   const { email, password } = userData;
 
   // console.log("userData : ", userData);
