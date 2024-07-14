@@ -1,8 +1,8 @@
 # Steps to run this Project
 
-- Clone this repo using `git clone https://github.com/kapil4457/Harmony.git .` .
-- Change your current directory to the project location : `cd ./harmony`.
-- Install all the dependencies using : `npm install`.
+- Clone this repo using `git clone https://github.com/kapil4457/Harmony.git .` 
+- Change your current directory to the project location : `cd ./harmony`
+- Install all the dependencies using : `npm install`
 - Create a .env file with the following variables and fill in their values :
 ```
 #NEXT
@@ -30,7 +30,7 @@ DWOLLA_SECRET=
 DWOLLA_BASE_URL=https://api-sandbox.dwolla.com
 DWOLLA_ENV=sandbox
 ```
-- Now you are all good to start the project. You can launch the project using  : `npm run dev`.
+- Now you are all good to start the project. You can launch the project using  : `npm run dev`
 - The project start on your localhost on port 3000.
 
 # Working Flow for various functions
